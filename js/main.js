@@ -21,7 +21,9 @@ Vue.component('card-component', {
     props: ['card', 'column'],
     template: `
         <div class="card">
-            {{ card.title }}
+            <h4>{{ card.title }}</h4>
+            <p v-if="card.description">Описание: {{ card.description }}</p>
+            <p v-if="card.deadline">Дедлайн: {{ card.deadline }}</p>
             <div v-if="card.title">
                 <ul>
                     <task-component
@@ -172,9 +174,39 @@ new Vue({
     data: {
         columns: [{}, {}, {}],
         cards: [
-            { column: 1, title: 'Задача 1', items: [], newItemText: '' },
-            { column: 2, title: 'Задача 2', items: [], newItemText: '' },
-            { column: 3, title: 'Задача 3', items: [], newItemText: '' }
+            { 
+                id: 1, 
+                column: 1, 
+                title: 'Задача 1', 
+                description: 'Описание задачи 1', 
+                deadline: '2024-12-31', 
+                createdAt: new Date(), 
+                updatedAt: new Date(), 
+                items: [], 
+                newItemText: '' 
+            },
+            { 
+                id: 2, 
+                column: 2, 
+                title: 'Задача 2', 
+                description: 'Описание задачи 2', 
+                deadline: '2024-11-30', 
+                createdAt: new Date(), 
+                updatedAt: new Date(), 
+                items: [], 
+                newItemText: '' 
+            },
+            { 
+                id: 3, 
+                column: 3, 
+                title: 'Задача 3', 
+                description: 'Описание задачи 3', 
+                deadline: '2024-10-31', 
+                createdAt: new Date(), 
+                updatedAt: new Date(), 
+                items: [], 
+                newItemText: '' 
+            }
         ]
     },
     created() {
