@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/vue.min.js"></script>
+    <script defer src="js/main.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <h1>Мои заметки</h1>
+            <p>Здесь вы можете организовать свои задачи и отслеживать их прогресс. Используйте мини канбан-доску, чтобы визуализировать свой рабочий процесс и повысить продуктивность)</p>
+        </div>
+        <section class="task-board" id="app">
+            <column-component
+                v-for="(column, index) in columns"
+                :key="index"
+                :column="column"
+                :column-index="index"
+            ></column-component>
+        </section>
+    </div>
+</body>
+
+</html>
