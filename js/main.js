@@ -1,5 +1,3 @@
-const MAX_CARDS_COLUMN_1 = 3;
-const MAX_CARDS_COLUMN_2 = 5;
 const STORAGE_KEY = 'vue-kanban-data'; // Ключ, под которым хранятся данные в localStorage
 
 Vue.component('task-component', {
@@ -184,17 +182,6 @@ Vue.component('column-component', {
             this.newTaskDeadline = '';
         },
         moveCard(card, column) {
-            if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
-                alert('В первом столбце находится максимальное количество карточек!');
-                return;
-            }
-            if (column === 2 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
-                alert('Во втором столбце находится максимальное количество карточек!');
-                return;
-            }
-            if (column === 3) {
-                alert ('hvkjgljuh')
-            }
             card.column = column;
         },
         deleteCard(card) {
