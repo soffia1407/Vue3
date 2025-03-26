@@ -19,31 +19,65 @@ Vue.component('task-component', {
 
 Vue.component('card-component', {
     props: ['card', 'column'],
+    data() {
+        return {
+            isEditing: false,
+            editedTitle: this.card.title,
+            editedDescription: this.card.description,
+            editedDeadline: this.card.deadline
+        };
+    },
     template: `
         <div class="card">
-            <h4>{{ card.title }}</h4>
-            <p v-if="card.description">Описание: {{ card.description }}</p>
-            <p v-if="card.deadline">Дедлайн: {{ card.deadline }}</p>
-            <div v-if="card.title">
-                <ul>
-                    <task-component
-                        v-for="(item, index) in card.items"
-                        :key="index"
-                        :item="item"
-                        :card="card"
-                        @check-and-move-card="checkAndMoveCard"
-                    ></task-component>
-                </ul>
-                <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
-                <button class="add-item-button" @click="addItem">Добавить пункт</button>
+            <div v-if="!isEditing">
+                <h4>{{ card.title }}</h4>
+                <p v-if="card.description">Описание: {{ card.description }}</p>
+                <p v-if="card.deadline">Дедлайн: {{ card.deadline }}</p>
+                <div v-if="card.title">
+                    <ul>
+                        <task-component
+                            v-for="(item, index) in card.items"
+                            :key="index"
+                            :item="item"
+                            :card="card"
+                            @check-and-move-card="checkAndMoveCard"
+                        ></task-component>
+                    </ul>
+                    <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
+                    <button class="add-item-button" @click="addItem">Добавить пункт</button>
+                </div>
+                <button v-if="column === 1" @click="startEditing">Редактировать</button>
+                <button @click="moveCard(1)">Нужно сделать</button>
+                <button @click="moveCard(2)">В процессе</button>
+                <button @click="moveCard(3)">Завершено</button>
+                <button @click="deleteCard">Удалить</button>
             </div>
-            <button @click="moveCard(1)">Нужно сделать</button>
-            <button @click="moveCard(2)">В процессе</button>
-            <button @click="moveCard(3)">Завершено</button>
-            <button @click="deleteCard">Удалить</button>
+            <div v-else>
+                <input type="text" v-model="editedTitle" placeholder="Заголовок">
+                <textarea v-model="editedDescription" placeholder="Описание"></textarea>
+                <input type="date" v-model="editedDeadline">
+                <button @click="saveChanges">Сохранить</button>
+                <button @click="cancelEditing">Отмена</button>
+            </div>
         </div>
     `,
     methods: {
+        startEditing() {
+            this.isEditing = true;
+            this.editedTitle = this.card.title;
+            this.editedDescription = this.card.description;
+            this.editedDeadline = this.card.deadline;
+        },
+        saveChanges() {
+            this.card.title = this.editedTitle;
+            this.card.description = this.editedDescription;
+            this.card.deadline = this.editedDeadline;
+            this.card.updatedAt = new Date();
+            this.isEditing = false;
+        },
+        cancelEditing() {
+            this.isEditing = false;
+        },
         addItem() {
             if (this.card.newItemText.trim() !== '') {
                 this.card.items.push({ text: this.card.newItemText, checked: false });
