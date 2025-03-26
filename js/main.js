@@ -47,9 +47,10 @@ Vue.component('card-component', {
                     <button class="add-item-button" @click="addItem">Добавить пункт</button>
                 </div>
                 <button v-if="column === 1" @click="startEditing">Редактировать</button>
-                <button @click="moveCard(1)">Нужно сделать</button>
-                <button @click="moveCard(2)">В процессе</button>
-                <button @click="moveCard(3)">Завершено</button>
+                <button @click="moveCard(1)">Запланированные задачи</button>
+                <button @click="moveCard(2)">Задачи в работе</button>
+                <button @click="moveCard(3)">Тестирование</button>
+                <button @click="movecard(4)">Выполненные задачи</button>
                 <button @click="deleteCard">Удалить</button>
             </div>
             <div v-else>
@@ -153,9 +154,10 @@ Vue.component('column-component', {
     methods: {
         getColumnTitle(column) {
             switch (column) {
-                case 1: return 'Нужно сделать';
-                case 2: return 'В процессе';
-                case 3: return 'Завершено';
+                case 1: return 'Запланированные задачи';
+                case 2: return 'Задачи в работе';
+                case 3: return 'Тестирование';
+                case 4: return 'Выполненные задачи'
                 default: return '';
             }
         },
@@ -190,6 +192,9 @@ Vue.component('column-component', {
                 alert('Во втором столбце находится максимальное количество карточек!');
                 return;
             }
+            if (column === 3) {
+                alert ('hvkjgljuh')
+            }
             card.column = column;
         },
         deleteCard(card) {
@@ -215,7 +220,7 @@ Vue.component('column-component', {
 new Vue({
     el: '#app',
     data: {
-        columns: [{}, {}, {}],
+        columns: [{}, {}, {}, {}],
         cards: [
             { 
                 id: 1, 
