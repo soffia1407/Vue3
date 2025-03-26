@@ -49,10 +49,16 @@ Vue.component('card-component', {
                     <button class="add-item-button" @click="addItem">Добавить пункт</button>
                 </div>
                 <button v-if="column === 1" @click="startEditing">Редактировать</button>
-                <button @click="moveCard(1)">Запланированные задачи</button>
-                <button @click="moveCard(2)">Задачи в работе</button>
-                <button @click="moveCard(3)">Тестирование</button>
-                <button @click="moveCard(4)">Выполненные задачи</button>
+                <template v-if="card.column === 1">
+                    <button @click="moveCard(2)">В работу</button>
+                </template>
+                <template v-if="card.column === 2">
+                    <button @click="moveCard(3)">В тестирование</button>
+                </template>
+                <template v-if="card.column === 3">
+                    <button @click="moveCard(4)">Выполнено</button>
+                    <button @click="moveCard(2)">Вернуть в работу</button>
+                </template>
                 <button @click="deleteCard">Удалить</button>
             </div>
             <div v-else>
@@ -97,8 +103,17 @@ Vue.component('card-component', {
                 this.checkAndMoveCard(this.card);
             }
         },
-        moveCard(column) {
-            this.$emit('move-card', this.card, column);
+        moveCard(targetColumn) {
+            const currentColumn = this.card.column;
+            if (
+                (currentColumn === 1 && targetColumn === 2) ||
+                (currentColumn === 2 && targetColumn === 3) ||
+                (currentColumn === 3 && (targetColumn === 4 || targetColumn === 2))
+            ) {
+                this.$emit('move-card', this.card, targetColumn);
+            } else {
+                alert('Нельзя переместить карточку в этот столбец!');
+            }
         },
         deleteCard() {
             this.$emit('delete-card', this.card);
@@ -108,9 +123,7 @@ Vue.component('card-component', {
             const checkedItems = card.items.filter(item => item.checked).length;
             const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
 
-            if (percentage > 50 && percentage < 100) {
-                this.moveCard(2);
-            } else if (percentage === 100) {
+            if (percentage > 50 && percentage <= 100 && card.column === 2) { 
                 this.moveCard(3);
             }
         }
