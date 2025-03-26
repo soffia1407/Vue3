@@ -31,6 +31,10 @@ Vue.component('card-component', {
                 <h4>{{ card.title }}</h4>
                 <p v-if="card.description">Описание: {{ card.description }}</p>
                 <p v-if="card.deadline">Дедлайн: {{ card.deadline }}</p>
+                <p>Создано: {{ formatDate(card.createdAt) }}</p>
+                <p v-if="card.updatedAt && card.updatedAt !== card.createdAt">
+                    Последнее редактирование: {{ formatDate(card.updatedAt) }}
+                </p>
                 <div v-if="card.title">
                     <ul>
                         <task-component
@@ -76,6 +80,15 @@ Vue.component('card-component', {
         },
         cancelEditing() {
             this.isEditing = false;
+        },
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${day}.${month}.${year} ${hours}:${minutes}`;
         },
         addItem() {
             if (this.card.newItemText.trim() !== '') {
