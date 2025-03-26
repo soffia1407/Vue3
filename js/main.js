@@ -76,8 +76,12 @@ Vue.component('column-component', {
     template: `
         <div class="task-column" :id="'column' + (Number(columnIndex) + 1)">
             <h3>{{ getColumnTitle(Number(columnIndex) + 1) }}</h3>
-            <input type="text" v-model="newTaskTitle" :placeholder="'Название новой задачи'">
-            <button @click="addCard">Добавить задачу</button>
+            <div v-if="isFirstColumn">
+                <input type="text" v-model="newTaskTitle" placeholder="Название задачи"><br>
+                <textarea v-model="newTaskDescription" placeholder="Описание задачи"></textarea><br>
+                <p>Выбери дедлайн:<input type="date" v-model="newTaskDeadline"></p><br>
+                <button class="add-item-button" @click="addCard">Добавить задачу</button>
+            </div>
             <div class="task-list" :id="'cards' + (Number(columnIndex) + 1)">
                 <card-component
                     v-for="card in filteredCards"
@@ -94,6 +98,8 @@ Vue.component('column-component', {
     data() {
         return {
             newTaskTitle: '',
+            newTaskDescription: '',
+            newTaskDeadline: ''
         };
     },
     computed: {
@@ -105,6 +111,9 @@ Vue.component('column-component', {
         },
         column2CardCount() {
             return this.$root.cards.filter(card => card.column === 2).length;
+        },
+        isFirstColumn() {
+            return Number(this.columnIndex) === 0; // Явное приведение к числу
         }
     },
     methods: {
@@ -121,22 +130,22 @@ Vue.component('column-component', {
                 alert('Введите название задачи!');
                 return;
             }
-            if (Number(this.columnIndex) === 0 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
-                alert('В первом столбце находится максимальное количество карточек!');
-                return;
-            }
-            if (Number(this.columnIndex) === 1 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
-                alert('Во втором столбце находится максимальное количество карточек!');
-                return;
-            }
+
             const newCard = {
+                id: Date.now(),
                 title: this.newTaskTitle,
+                description: this.newTaskDescription,
+                deadline: this.newTaskDeadline,
+                createdAt: new Date(),
+                updatedAt: new Date(),
                 column: Number(this.columnIndex) + 1,
                 items: [],
                 newItemText: ''
             };
             this.$root.cards.push(newCard);
             this.newTaskTitle = '';
+            this.newTaskDescription = '';
+            this.newTaskDeadline = '';
         },
         moveCard(card, column) {
             if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
