@@ -48,7 +48,7 @@ Vue.component('card-component', {
                 <button @click="moveCard(1)">Запланированные задачи</button>
                 <button @click="moveCard(2)">Задачи в работе</button>
                 <button @click="moveCard(3)">Тестирование</button>
-                <button @click="movecard(4)">Выполненные задачи</button>
+                <button @click="moveCard(4)">Выполненные задачи</button>
                 <button @click="deleteCard">Удалить</button>
             </div>
             <div v-else>
