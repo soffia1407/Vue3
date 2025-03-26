@@ -22,7 +22,8 @@ Vue.component('card-component', {
             isEditing: false,
             editedTitle: this.card.title,
             editedDescription: this.card.description,
-            editedDeadline: this.card.deadline
+            editedDeadline: this.card.deadline,
+            returnReasonInput: '' 
         };
     },
     template: `
@@ -35,6 +36,7 @@ Vue.component('card-component', {
                 <p v-if="card.updatedAt && card.updatedAt !== card.createdAt">
                     Последнее редактирование: {{ formatDate(card.updatedAt) }}
                 </p>
+                <p v-if="card.returnReason">Причина возврата: {{ card.returnReason }}</p> 
                 <div v-if="card.title">
                     <ul>
                         <task-component
@@ -57,7 +59,12 @@ Vue.component('card-component', {
                 </template>
                 <template v-if="card.column === 3">
                     <button @click="moveCard(4)">Выполнено</button>
-                    <button @click="moveCard(2)">Вернуть в работу</button>
+                    <button @click="showReturnReasonInput">Вернуть в работу</button> 
+                    <div v-if="showReturnReason">
+                        <input type="text" v-model="returnReasonInput" placeholder="Причина возврата">
+                        <button @click="returnToWork">Подтвердить возврат</button>
+                        <button @click="cancelReturn">Отмена</button>
+                    </div>
                 </template>
                 <button @click="deleteCard">Удалить</button>
             </div>
@@ -87,6 +94,23 @@ Vue.component('card-component', {
         cancelEditing() {
             this.isEditing = false;
         },
+        showReturnReasonInput() {
+            this.showReturnReason = true; 
+        },
+        returnToWork() {
+            if (this.returnReasonInput.trim() !== '') {
+                this.card.returnReason = this.returnReasonInput;
+                this.moveCard(2); 
+                this.showReturnReason = false; 
+                this.returnReasonInput = ''; 
+            } else {
+                alert('Пожалуйста, укажите причину возврата.');
+            }
+        },
+        cancelReturn() {
+            this.showReturnReason = false; 
+            this.returnReasonInput = ''; 
+        },
         formatDate(dateString) {
             const date = new Date(dateString);
             const day = date.getDate().toString().padStart(2, '0');
@@ -115,6 +139,7 @@ Vue.component('card-component', {
                 alert('Нельзя переместить карточку в этот столбец!');
             }
         },
+        showReturnReason: false,
         deleteCard() {
             this.$emit('delete-card', this.card);
         },
@@ -137,7 +162,7 @@ Vue.component('column-component', {
             <h3>{{ getColumnTitle(Number(columnIndex) + 1) }}</h3>
             <div v-if="isFirstColumn">
                 <input type="text" v-model="newTaskTitle" placeholder="Название задачи"><br>
-                <textarea v-model="newTaskDescription" placeholder="Описание задачи"></textarea><br>
+                <textarea class="textDescription" v-model="newTaskDescription" placeholder="Описание задачи"></textarea><br>
                 <p>Выбери дедлайн:<input type="date" v-model="newTaskDeadline"></p><br>
                 <button class="add-item-button" @click="addCard">Добавить задачу</button>
             </div>
@@ -244,7 +269,8 @@ new Vue({
                 createdAt: new Date(), 
                 updatedAt: new Date(), 
                 items: [], 
-                newItemText: '' 
+                newItemText: '',
+                returnReason: '' 
             },
             { 
                 id: 2, 
